@@ -146,7 +146,6 @@
             <div id="transcription-output" class="hidden mt-8 text-left bg-gray-900 p-6 rounded-lg shadow-lg">
                 <h3 class="text-2xl font-bold text-white mb-4">Transcription Result</h3>
                 
-                <!-- Diarized Conversation Table -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-300 conversation-table">
                         <thead class="text-xs text-gray-100 uppercase">
@@ -156,7 +155,6 @@
                             </tr>
                         </thead>
                         <tbody id="conversation-body">
-                            <!-- Rows will be inserted here by JavaScript -->
                         </tbody>
                     </table>
                 </div>
@@ -199,20 +197,14 @@
         const copyBtn = document.getElementById('copy-btn');
         const downloadBtn = document.getElementById('download-btn');
         const tryAgainBtn = document.getElementById('try-again-btn');
-
-        // --- Tabs ---
         const tabRealtime = document.getElementById('tab-realtime');
         const tabUpload = document.getElementById('tab-upload');
         const realtimePanel = document.getElementById('realtime-panel');
         const uploadPanel = document.getElementById('upload-panel');
-
-        // --- Real-time Elements ---
         const startRecordBtn = document.getElementById('start-record-btn');
         const stopRecordBtn = document.getElementById('stop-record-btn');
         const realtimeStatus = document.getElementById('realtime-status');
         const recordingIndicator = document.getElementById('recording-indicator-container');
-
-        // --- File Upload Elements ---
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const fileNameDisplay = document.getElementById('file-name');
@@ -224,7 +216,7 @@
         let audioChunks = [];
         let currentTranscription = "";
 
-        // --- Tab Switching Logic ---
+        // --- Tab Switching ---
         tabRealtime.addEventListener('click', () => {
             realtimePanel.classList.remove('hidden');
             uploadPanel.classList.add('hidden');
@@ -267,30 +259,22 @@
              }
         });
 
-
-        // --- Real-time Recording Logic ---
+        // --- Real-time Recording ---
         startRecordBtn.addEventListener('click', async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-                
-                mediaRecorder.ondataavailable = event => {
-                    audioChunks.push(event.data);
-                };
-
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
                 mediaRecorder.onstop = () => {
                     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                     transcribeAudio(audioBlob);
                     audioChunks = [];
                     stream.getTracks().forEach(track => track.stop());
                 };
-                
                 mediaRecorder.start();
                 updateRecordingUI(true);
-
             } catch (err) {
-                console.error("Error accessing microphone:", err);
-                realtimeStatus.textContent = "Could not access microphone. Please grant permission and try again.";
+                realtimeStatus.textContent = "Could not access microphone. Please grant permission.";
             }
         });
 
@@ -310,19 +294,24 @@
             tabUpload.disabled = isRecording;
         }
 
-
         // --- Core Transcription & UI Logic ---
-        async function transcribeAudio(audioBlob) {
-            showLoading(true);
+        function switchViews(showResults) {
+            mainContainer.classList.toggle('hidden', showResults);
+            resultContainer.classList.toggle('hidden', !showResults);
+        }
 
-            // --- API KEY CONFIGURATION ---
-            // IMPORTANT: Paste your Gemini API Key here for local testing.
-            // Do NOT commit this file with your key to a public repository.
+        async function transcribeAudio(audioBlob) {
+            // 1. Switch to the results view and show loader
+            switchViews(true);
+            loader.classList.remove('hidden');
+            transcriptionOutput.classList.add('hidden');
+            tryAgainBtn.classList.add('hidden');
+
             const apiKey = "AIzaSyAM7IPg1CMbZyGYTxKay_Fb_k_GaK8vP7k"; 
             
             if (apiKey === "YOUR_GEMINI_API_KEY_HERE") {
                 displayTranscription("ERROR: Please add your Gemini API Key to the 'apiKey' variable in the script.");
-                showLoading(false);
+                loader.classList.add('hidden'); // Hide loader on error
                 return;
             }
 
@@ -331,16 +320,13 @@
             const reader = new FileReader();
             reader.onloadend = async () => {
                 const base64Audio = reader.result.split(',')[1];
-                
                 const payload = {
-                  "contents": [
-                    {
+                  "contents": [{
                       "parts": [
                         { "text": "Transcribe the following audio precisely. Provide speaker labels (e.g., Speaker 1:, Speaker 2:) for diarization." },
                         { "inline_data": { "mime_type": audioBlob.type || 'audio/webm', "data": base64Audio } }
                       ]
-                    }
-                  ]
+                  }]
                 };
 
                 try {
@@ -349,76 +335,56 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
-
                     if (!response.ok) {
                         const errorData = await response.json();
                         throw new Error(`API Error: ${errorData.error.message}`);
                     }
-
                     const result = await response.json();
                     if (result.candidates && result.candidates.length > 0) {
                         const text = result.candidates[0].content.parts[0].text;
-                        currentTranscription = text; // Store for download/copy
+                        currentTranscription = text;
                         displayTranscription(text);
                     } else {
                         throw new Error("No transcription result found in API response.");
                     }
-
                 } catch (error) {
-                    console.error("Error during transcription:", error);
                     currentTranscription = `Sorry, an error occurred: ${error.message}. Please try again.`;
                     displayTranscription(currentTranscription);
                 } finally {
-                     showLoading(false);
+                    loader.classList.add('hidden'); // Hide loader after API call is complete
                 }
             };
             reader.readAsDataURL(audioBlob);
         }
-
-        function showLoading(isLoading) {
-             mainContainer.classList.toggle('hidden', isLoading);
-             resultContainer.classList.toggle('hidden', !isLoading);
-             loader.classList.toggle('hidden', !isLoading);
-             transcriptionOutput.classList.add('hidden');
-             tryAgainBtn.classList.add('hidden');
-        }
         
         function displayTranscription(text) {
-            // 1. Clear previous results
             conversationBody.innerHTML = '';
-            
-            // 2. Display raw text
             transcriptionText.innerText = text;
 
-            // 3. Parse and display diarized conversation
             const lines = text.split('\n').filter(line => line.trim() !== '');
             lines.forEach(line => {
                 const parts = line.split(':');
                 const speaker = parts.length > 1 ? parts[0].trim() : 'N/A';
                 const dialogue = parts.length > 1 ? parts.slice(1).join(':').trim() : line;
-
                 const row = document.createElement('tr');
                 const speakerCell = document.createElement('td');
                 const dialogueCell = document.createElement('td');
-
                 speakerCell.textContent = speaker;
                 speakerCell.className = 'font-semibold text-teal-400';
                 dialogueCell.textContent = dialogue;
-
                 row.appendChild(speakerCell);
                 row.appendChild(dialogueCell);
                 conversationBody.appendChild(row);
             });
-
-            // 4. Show the results
+            
+            // Show the results area
             transcriptionOutput.classList.remove('hidden');
             tryAgainBtn.classList.remove('hidden');
         }
 
         // --- UI Reset and Action Buttons ---
         tryAgainBtn.addEventListener('click', () => {
-            mainContainer.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
+            switchViews(false); // Go back to the main view
             fileInput.value = '';
             fileNameDisplay.textContent = '';
             audioFile = null;
@@ -432,9 +398,7 @@
                 const originalText = copyBtn.innerHTML;
                 copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
                 setTimeout(() => { copyBtn.innerHTML = originalText; }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
+            }).catch(err => console.error('Failed to copy text: ', err));
         });
 
         downloadBtn.addEventListener('click', () => {
@@ -448,7 +412,6 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
-
     </script>
 </body>
 </html>
