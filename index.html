@@ -1,1 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proscribe - Convert Audio to Text</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0D0D0D;
+            color: #E5E7EB;
+        }
+        .tab-button {
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .tab-button.active {
+            background-color: #14B8A6;
+            color: white;
+        }
+        .tab-button:not(.active) {
+            background-color: #374151;
+            color: #D1D5DB;
+        }
+        .drop-zone {
+            border: 2px dashed #4B5563;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .drop-zone.drag-over {
+            background-color: #1F2937;
+            border-color: #6B7280;
+        }
+        .btn-primary {
+            background-color: #14B8A6;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: #0D9488;
+        }
+        .btn-danger {
+            background-color: #F43F5E;
+        }
+        .btn-danger:hover:not(:disabled) {
+            background-color: #E11D48;
+        }
+        .loader {
+            border-top-color: #14B8A6;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .proscribe-logo svg {
+             width: 24px;
+             height: 24px;
+             fill: #E5E7EB;
+        }
+        .recording-indicator {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="py-6 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto flex items-center">
+             <div class="proscribe-logo mr-2">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.59L7.71 13.3a.996.996 0 111.41-1.41L11 14.17V7h2v7.17l1.88-1.88a.996.996 0 111.41 1.41L13 16.59V18h-2v-1.41z"/></svg>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-white">Proscribe</h1>
+        </div>
+    </header>
 
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
+        <div id="main-container" class="w-full max-w-2xl">
+            <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">
+                Convert Audio to Text Instantly
+            </h2>
+            <p class="mt-4 text-lg sm:text-xl text-gray-400">
+                Use our real-time recorder or upload an audio file for accurate transcriptions.
+            </p>
+
+            <!-- Tabs -->
+            <div class="mt-8 flex justify-center space-x-2">
+                <button id="tab-realtime" class="tab-button font-bold py-2 px-6 rounded-t-lg active">Real-time</button>
+                <button id="tab-upload" class="tab-button font-bold py-2 px-6 rounded-t-lg">File Upload</button>
+            </div>
+
+            <!-- Real-time Transcriber -->
+            <div id="realtime-panel" class="w-full bg-gray-800 p-8 rounded-b-lg rounded-tr-lg">
+                <p id="realtime-status" class="text-gray-400 mb-4">Click "Start Recording" to begin.</p>
+                <div id="recording-indicator-container" class="hidden items-center justify-center mb-4">
+                    <div class="recording-indicator h-4 w-4 bg-red-500 rounded-full mr-2"></div>
+                    <span class="text-red-400">Recording...</span>
+                </div>
+                 <div class="space-x-4">
+                    <button id="start-record-btn" class="btn-primary text-white font-bold py-3 px-8 rounded-lg shadow-lg"><i class="fas fa-microphone mr-2"></i>Start Recording</button>
+                    <button id="stop-record-btn" class="btn-danger text-white font-bold py-3 px-8 rounded-lg shadow-lg" disabled><i class="fas fa-stop mr-2"></i>Stop Recording</button>
+                </div>
+            </div>
+
+            <!-- File Upload Transcriber -->
+            <div id="upload-panel" class="hidden w-full bg-gray-800 p-8 rounded-b-lg rounded-tl-lg">
+                <div id="drop-zone" class="w-full max-w-lg mx-auto p-8 sm:p-12 rounded-lg drop-zone">
+                    <input type="file" id="file-input" class="hidden" accept="audio/*">
+                    <div class="flex flex-col items-center justify-center space-y-4">
+                        <div class="text-gray-400"><i class="fas fa-cloud-upload-alt fa-3x"></i></div>
+                        <p class="text-gray-400">
+                            <span class="font-semibold text-teal-400 cursor-pointer" onclick="document.getElementById('file-input').click()">Click to select</span> or drag & drop.
+                        </p>
+                        <p id="file-name" class="text-sm text-gray-500"></p>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <button id="transcribe-file-btn" class="btn-primary text-white font-bold py-3 px-8 rounded-lg shadow-lg" disabled>Transcribe File</button>
+                </div>
+                 <p class="text-xs text-gray-500 mt-4">For demonstration only. Uploaded audio is treated as PHI, processed securely, and deleted immediately. No data is stored.</p>
+            </div>
+        </div>
+
+        <!-- Result and Loader Container -->
+        <div id="result-container" class="w-full max-w-3xl hidden">
+             <div id="loader" class="hidden my-8">
+                <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-600 h-12 w-12 mx-auto"></div>
+                <p class="text-gray-400 mt-4">Transcribing audio, please wait...</p>
+            </div>
+            <div id="transcription-output" class="hidden mt-8 text-left bg-gray-900 p-6 rounded-lg shadow-lg">
+                <h3 class="text-2xl font-bold text-white mb-4">Transcription Result</h3>
+                <div id="transcription-text" class="text-gray-300 whitespace-pre-wrap"></div>
+                 <button id="copy-btn" class="mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">
+                    <i class="fas fa-copy mr-2"></i>Copy Text
+                </button>
+            </div>
+             <button id="try-again-btn" class="hidden mt-8 btn-primary text-white font-bold py-3 px-8 rounded-lg shadow-lg">
+                Transcribe Again
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto text-center text-gray-500">
+            &copy; 2025 Proscribe Demo Site
+        </div>
+    </footer>
+
+    <script>
+        // --- DOM Elements ---
+        const mainContainer = document.getElementById('main-container');
+        const resultContainer = document.getElementById('result-container');
+        const loader = document.getElementById('loader');
+        const transcriptionOutput = document.getElementById('transcription-output');
+        const transcriptionText = document.getElementById('transcription-text');
+        const copyBtn = document.getElementById('copy-btn');
+        const tryAgainBtn = document.getElementById('try-again-btn');
+
+        // --- Tabs ---
+        const tabRealtime = document.getElementById('tab-realtime');
+        const tabUpload = document.getElementById('tab-upload');
+        const realtimePanel = document.getElementById('realtime-panel');
+        const uploadPanel = document.getElementById('upload-panel');
+
+        // --- Real-time Elements ---
+        const startRecordBtn = document.getElementById('start-record-btn');
+        const stopRecordBtn = document.getElementById('stop-record-btn');
+        const realtimeStatus = document.getElementById('realtime-status');
+        const recordingIndicator = document.getElementById('recording-indicator-container');
+
+        // --- File Upload Elements ---
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileNameDisplay = document.getElementById('file-name');
+        const transcribeFileBtn = document.getElementById('transcribe-file-btn');
+        
+        // --- State Variables ---
+        let audioFile = null;
+        let mediaRecorder;
+        let audioChunks = [];
+
+        // --- Tab Switching Logic ---
+        tabRealtime.addEventListener('click', () => {
+            realtimePanel.classList.remove('hidden');
+            uploadPanel.classList.add('hidden');
+            tabRealtime.classList.add('active');
+            tabUpload.classList.remove('active');
+        });
+
+        tabUpload.addEventListener('click', () => {
+            uploadPanel.classList.remove('hidden');
+            realtimePanel.classList.add('hidden');
+            tabUpload.classList.add('active');
+            tabRealtime.classList.remove('active');
+        });
+
+        // --- File Upload Logic ---
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            handleFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+        
+        function handleFile(file) {
+             if (file && file.type.startsWith('audio/')) {
+                audioFile = file;
+                fileNameDisplay.textContent = `File: ${file.name}`;
+                transcribeFileBtn.disabled = false;
+            } else {
+                audioFile = null;
+                fileNameDisplay.textContent = 'Please select a valid audio file.';
+                transcribeFileBtn.disabled = true;
+            }
+        }
+        transcribeFileBtn.addEventListener('click', () => {
+             if (audioFile) {
+                transcribeAudio(audioFile);
+             }
+        });
+
+
+        // --- Real-time Recording Logic ---
+        startRecordBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    transcribeAudio(audioBlob);
+                    audioChunks = [];
+                    stream.getTracks().forEach(track => track.stop()); // Stop microphone access
+                };
+                
+                mediaRecorder.start();
+                updateRecordingUI(true);
+
+            } catch (err) {
+                console.error("Error accessing microphone:", err);
+                realtimeStatus.textContent = "Could not access microphone. Please grant permission and try again.";
+            }
+        });
+
+        stopRecordBtn.addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                updateRecordingUI(false);
+            }
+        });
+
+        function updateRecordingUI(isRecording) {
+            if (isRecording) {
+                startRecordBtn.disabled = true;
+                stopRecordBtn.disabled = false;
+                realtimeStatus.textContent = "Recording in progress...";
+                recordingIndicator.classList.remove('hidden');
+                recordingIndicator.classList.add('flex');
+                tabUpload.disabled = true; // Prevent switching tabs while recording
+            } else {
+                startRecordBtn.disabled = false;
+                stopRecordBtn.disabled = true;
+                realtimeStatus.textContent = 'Click "Start Recording" to begin.';
+                recordingIndicator.classList.add('hidden');
+                recordingIndicator.classList.remove('flex');
+                tabUpload.disabled = false;
+            }
+        }
+
+
+        // --- Core Transcription & UI Logic ---
+        async function transcribeAudio(audioBlob) {
+            showLoading(true);
+
+            // IMPORTANT: In a real app, you MUST NOT expose your API key on the client side.
+            // This key should be handled by a secure backend proxy.
+            // The deployment guide will explain how to set this up with Azure Functions.
+            const apiKey = 'AIzaSyAM7IPg1CMbZyGYTxKay_Fb_k_GaK8vP7k'; // <-- LEAVE THIS EMPTY. It will be provided by the environment.
+            // If you are testing locally and not using a backend, you can temporarily paste your key here.
+            
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64Audio = reader.result.split(',')[1];
+                
+                const payload = {
+                  "contents": [
+                    {
+                      "parts": [
+                        { "text": "Transcribe the following audio precisely, including any filler words:" },
+                        { "inline_data": { "mime_type": audioBlob.type, "data": base64Audio } }
+                      ]
+                    }
+                  ]
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`API Error: ${errorData.error.message}`);
+                    }
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        displayTranscription(text);
+                    } else {
+                        throw new Error("No transcription result found in API response.");
+                    }
+
+                } catch (error) {
+                    console.error("Error during transcription:", error);
+                    displayTranscription(`Sorry, an error occurred: ${error.message}. Please try again.`);
+                } finally {
+                     showLoading(false);
+                }
+            };
+            reader.readAsDataURL(audioBlob);
+        }
+
+        function showLoading(isLoading) {
+             if (isLoading) {
+                mainContainer.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+                loader.classList.remove('hidden');
+                transcriptionOutput.classList.add('hidden');
+                tryAgainBtn.classList.add('hidden');
+            } else {
+                loader.classList.add('hidden');
+            }
+        }
+        
+        function displayTranscription(text) {
+            transcriptionText.innerText = text;
+            transcriptionOutput.classList.remove('hidden');
+            tryAgainBtn.classList.remove('hidden');
+        }
+
+        // --- UI Reset and Copy ---
+        tryAgainBtn.addEventListener('click', () => {
+            mainContainer.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+            fileInput.value = '';
+            fileNameDisplay.textContent = '';
+            audioFile = null;
+            transcribeFileBtn.disabled = true;
+            updateRecordingUI(false);
+        });
+
+        copyBtn.addEventListener('click', () => {
+            const textToCopy = transcriptionText.innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
+                setTimeout(() => { copyBtn.innerHTML = originalText; }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        });
+
+    </script>
+</body>
+</html>
