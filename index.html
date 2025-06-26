@@ -3,47 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proscribe - Convert Audio to Text</title>
+    <title>Provoice - Turn your audio into text</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0D0D0D;
-            color: #E5E7EB;
-        }
-        .tab-button {
-            transition: background-color 0.2s, color 0.2s;
-        }
-        .tab-button.active {
-            background-color: #14B8A6;
-            color: white;
-        }
-        .tab-button:not(.active) {
-            background-color: #374151;
-            color: #D1D5DB;
-        }
-        .drop-zone {
-            border: 2px dashed #4B5563;
-            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-        }
-        .drop-zone.drag-over {
-            background-color: #1F2937;
-            border-color: #6B7280;
+            background: linear-gradient(to bottom right, #ffffff, #e0f2f1);
+            color: #374151;
         }
         .btn-primary {
-            background-color: #14B8A6;
+            background-color: #14B8A6; /* teal-500 */
+            color: white;
             transition: background-color 0.2s ease-in-out;
         }
         .btn-primary:hover:not(:disabled) {
+            background-color: #0D9488; /* teal-600 */
+        }
+        .btn-primary:disabled {
+            background-color: #E5E7EB; /* gray-200 */
+            color: #9CA3AF; /* gray-400 */
+            cursor: not-allowed;
+        }
+        .logout-btn {
+             background-color: #14B8A6;
+             border: 1px solid #14B8A6;
+        }
+        .logout-btn:hover {
             background-color: #0D9488;
         }
-        .btn-danger {
-            background-color: #F43F5E;
+        .dashboard-link {
+            color: #374151;
+            transition: color 0.2s;
         }
-        .btn-danger:hover:not(:disabled) {
-            background-color: #E11D48;
+        .dashboard-link:hover {
+            color: #14B8A6;
+        }
+        .upload-card {
+            background-color: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .drop-zone {
+            border: 2px dashed #D1D5DB; /* gray-300 */
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .drop-zone.drag-over {
+            background-color: #F3F4F6; /* gray-100 */
+            border-color: #9CA3AF; /* gray-400 */
         }
         .loader {
             border-top-color: #14B8A6;
@@ -54,22 +61,9 @@
                 transform: rotate(360deg);
             }
         }
-        .proscribe-logo svg {
-             width: 24px;
-             height: 24px;
-             fill: #E5E7EB;
-        }
-        .recording-indicator {
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
         .text-row {
             padding: 8px 12px;
-            background-color: #111827;
-            border-bottom: 1px solid #1F2937;
+            border-bottom: 1px solid #E5E7EB; /* gray-200 */
         }
         .text-row:last-child {
             border-bottom: none;
@@ -78,97 +72,77 @@
 </head>
 <body class="flex flex-col min-h-screen">
     <!-- Header -->
-    <header class="py-6 px-4 sm:px-6 lg:px-8">
-        <div class="container mx-auto flex items-center">
-             <div class="proscribe-logo mr-2">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.59L7.71 13.3a.996.996 0 111.41-1.41L11 14.17V7h2v7.17l1.88-1.88a.996.996 0 111.41 1.41L13 16.59V18h-2v-1.41z"/></svg>
+    <header class="py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-microphone-alt text-xl sm:text-2xl text-teal-500"></i>
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Provoice</h1>
             </div>
-            <h1 class="text-2xl font-bold tracking-tight text-white">Proscribe</h1>
+            <div class="flex items-center space-x-3 sm:space-x-6">
+                <a href="#" class="hidden sm:block dashboard-link font-semibold">Dashboard</a>
+                <button class="logout-btn btn-primary font-bold py-2 px-3 sm:px-4 rounded-lg text-sm sm:text-base">Logout</button>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
-        <div id="main-container" class="w-full max-w-2xl">
-            <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white">
-                Convert Audio to Text Instantly
+        <!-- Main Container for Upload -->
+        <div id="main-container" class="w-full">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-800">
+                Turn your audio into text in minutes
             </h2>
-            <p class="mt-4 text-lg sm:text-xl text-gray-400">
-                Use our real-time recorder or upload an audio file for accurate transcriptions.
+            <p class="mt-4 text-base sm:text-lg text-gray-500 max-w-2xl mx-auto">
+                Upload your file and get a high-quality transcript back in just a few clicks.
             </p>
 
-            <!-- Tabs -->
-            <div class="mt-8 flex justify-center space-x-2">
-                <button id="tab-realtime" class="tab-button font-bold py-2 px-6 rounded-t-lg active">Real-time</button>
-                <button id="tab-upload" class="tab-button font-bold py-2 px-6 rounded-t-lg">File Upload</button>
-            </div>
-
-            <!-- Real-time Transcriber -->
-            <div id="realtime-panel" class="w-full bg-gray-800 p-8 rounded-b-lg rounded-tr-lg">
-                <p id="realtime-status" class="text-gray-400 mb-4">Click "Start Recording" to begin.</p>
-                <div id="recording-indicator-container" class="hidden items-center justify-center mb-4">
-                    <div class="recording-indicator h-4 w-4 bg-red-500 rounded-full mr-2"></div>
-                    <span class="text-red-400">Recording...</span>
-                </div>
-                 <div class="space-x-4">
-                    <button id="start-record-btn" class="btn-primary text-white font-bold py-3 px-8 rounded-lg shadow-lg"><i class="fas fa-microphone mr-2"></i>Start Recording</button>
-                    <button id="stop-record-btn" class="btn-danger text-white font-bold py-3 px-8 rounded-lg shadow-lg" disabled><i class="fas fa-stop mr-2"></i>Stop Recording</button>
-                </div>
-            </div>
-
-            <!-- File Upload Transcriber -->
-            <div id="upload-panel" class="hidden w-full bg-gray-800 p-8 rounded-b-lg rounded-tl-lg">
-                <div id="drop-zone" class="w-full max-w-lg mx-auto p-8 sm:p-12 rounded-lg drop-zone">
+            <div id="upload-card" class="upload-card mt-8 w-full max-w-lg mx-auto p-6 sm:p-8 rounded-lg">
+                <h3 class="text-lg sm:text-xl font-semibold mb-6">Upload Your Audio</h3>
+                <div id="drop-zone" class="w-full p-6 sm:p-10 rounded-lg drop-zone">
                     <input type="file" id="file-input" class="hidden" accept="audio/*">
                     <div class="flex flex-col items-center justify-center space-y-4">
-                        <div class="text-gray-400"><i class="fas fa-cloud-upload-alt fa-3x"></i></div>
-                        <p class="text-gray-400">
-                            <span class="font-semibold text-teal-400 cursor-pointer" onclick="document.getElementById('file-input').click()">Click to select</span> or drag & drop.
+                        <i class="fas fa-upload text-3xl sm:text-4xl text-teal-500"></i>
+                        <p class="text-gray-600 text-sm sm:text-base">
+                            Drag & drop your audio file here
                         </p>
-                        <p id="file-name" class="text-sm text-gray-500"></p>
+                        <p class="text-gray-400 text-sm">or</p>
+                        <button id="browse-btn" class="btn-primary font-bold py-2 px-6 rounded-lg text-sm sm:text-base">Browse Files</button>
+                        <p id="file-name" class="text-sm text-gray-500 pt-2"></p>
                     </div>
                 </div>
-                <div class="mt-8">
-                    <button id="transcribe-file-btn" class="btn-primary text-white font-bold py-3 px-8 rounded-lg shadow-lg" disabled>Transcribe File</button>
-                </div>
-                 <p class="text-xs text-gray-500 mt-4">For demonstration only. Uploaded audio is treated as PHI, processed securely, and deleted immediately. No data is stored.</p>
+                <button id="transcribe-file-btn" class="w-full mt-6 btn-primary font-bold py-3 px-8 rounded-lg text-base sm:text-lg" disabled>Transcribe Audio</button>
             </div>
         </div>
 
-        <!-- Result and Loader Container -->
+        <!-- Result Container -->
         <div id="result-container" class="w-full max-w-4xl hidden">
              <div id="loader" class="hidden my-8">
-                <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-600 h-12 w-12 mx-auto"></div>
-                <p class="text-gray-400 mt-4">Transcribing audio, please wait...</p>
+                <div class="loader ease-linear rounded-full border-4 border-t-4 h-12 w-12 mx-auto"></div>
+                <p class="text-gray-500 mt-4">Transcribing audio, please wait...</p>
             </div>
-            <div id="transcription-output" class="hidden mt-8 text-left bg-gray-900 p-6 rounded-lg shadow-lg">
-                
-                <div id="raw-text-container">
-                     <h4 class="text-xl font-bold text-white mb-2">Transcription</h4>
-                     <div id="transcription-text-rows" class="text-gray-300 bg-gray-800 p-4 rounded-md">
-                        <!-- Rows of text will be inserted here -->
-                     </div>
+            <div id="transcription-output" class="hidden mt-8 text-left bg-white p-4 sm:p-6 rounded-lg shadow-lg">
+                <h4 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Transcription</h4>
+                <div id="transcription-text-rows" class="text-gray-600 bg-gray-50 p-2 sm:p-4 rounded-md border border-gray-200 text-sm sm:text-base">
                 </div>
-                
-                 <div class="mt-6 flex space-x-4">
-                     <button id="copy-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">
+                 <div class="mt-6 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
+                     <button id="copy-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg w-full sm:w-auto">
                         <i class="fas fa-copy mr-2"></i>Copy Text
                     </button>
-                    <button id="download-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">
+                    <button id="download-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg w-full sm:w-auto">
                         <i class="fas fa-download mr-2"></i>Download
                     </button>
                  </div>
             </div>
-             <button id="try-again-btn" class="hidden mt-8 btn-primary text-white font-bold py-3 px-8 rounded-lg shadow-lg">
-                Transcribe Again
+            <button id="try-again-btn" class="hidden mt-8 btn-primary font-bold py-3 px-8 rounded-lg shadow-lg">
+                Transcribe Another File
             </button>
         </div>
     </main>
 
     <!-- Footer -->
     <footer class="py-6 px-4 sm:px-6 lg:px-8">
-        <div class="container mx-auto text-center text-gray-500">
-            &copy; 2025 Proscribe Demo Site
+        <div class="container mx-auto text-center text-xs sm:text-sm text-gray-400">
+            &copy; 2025 Provoice. All Rights Reserved.
         </div>
     </footer>
 
@@ -182,42 +156,19 @@
         const copyBtn = document.getElementById('copy-btn');
         const downloadBtn = document.getElementById('download-btn');
         const tryAgainBtn = document.getElementById('try-again-btn');
-        const tabRealtime = document.getElementById('tab-realtime');
-        const tabUpload = document.getElementById('tab-upload');
-        const realtimePanel = document.getElementById('realtime-panel');
-        const uploadPanel = document.getElementById('upload-panel');
-        const startRecordBtn = document.getElementById('start-record-btn');
-        const stopRecordBtn = document.getElementById('stop-record-btn');
-        const realtimeStatus = document.getElementById('realtime-status');
-        const recordingIndicator = document.getElementById('recording-indicator-container');
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
+        const browseBtn = document.getElementById('browse-btn');
         const fileNameDisplay = document.getElementById('file-name');
         const transcribeFileBtn = document.getElementById('transcribe-file-btn');
         
         // --- State Variables ---
         let audioFile = null;
-        let mediaRecorder;
-        let audioChunks = [];
         let currentTranscription = "";
 
-        // --- Tab Switching ---
-        tabRealtime.addEventListener('click', () => {
-            realtimePanel.classList.remove('hidden');
-            uploadPanel.classList.add('hidden');
-            tabRealtime.classList.add('active');
-            tabUpload.classList.remove('active');
-        });
-
-        tabUpload.addEventListener('click', () => {
-            uploadPanel.classList.remove('hidden');
-            realtimePanel.classList.add('hidden');
-            tabUpload.classList.add('active');
-            tabRealtime.classList.remove('active');
-        });
-
-        // --- File Upload Logic ---
+        // --- Event Listeners for File Input ---
         dropZone.addEventListener('click', () => fileInput.click());
+        browseBtn.addEventListener('click', () => fileInput.click());
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
         dropZone.addEventListener('drop', (e) => {
@@ -230,7 +181,7 @@
         function handleFile(file) {
              if (file && file.type.startsWith('audio/')) {
                 audioFile = file;
-                fileNameDisplay.textContent = `File: ${file.name}`;
+                fileNameDisplay.textContent = `File selected: ${file.name}`;
                 transcribeFileBtn.disabled = false;
             } else {
                 audioFile = null;
@@ -238,46 +189,12 @@
                 transcribeFileBtn.disabled = true;
             }
         }
+
         transcribeFileBtn.addEventListener('click', () => {
              if (audioFile) {
                 transcribeAudio(audioFile);
              }
         });
-
-        // --- Real-time Recording ---
-        startRecordBtn.addEventListener('click', async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    transcribeAudio(audioBlob);
-                    audioChunks = [];
-                    stream.getTracks().forEach(track => track.stop());
-                };
-                mediaRecorder.start();
-                updateRecordingUI(true);
-            } catch (err) {
-                realtimeStatus.textContent = "Could not access microphone. Please grant permission.";
-            }
-        });
-
-        stopRecordBtn.addEventListener('click', () => {
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-                updateRecordingUI(false);
-            }
-        });
-
-        function updateRecordingUI(isRecording) {
-            startRecordBtn.disabled = isRecording;
-            stopRecordBtn.disabled = !isRecording;
-            realtimeStatus.textContent = isRecording ? "Recording in progress..." : 'Click "Start Recording" to begin.';
-            recordingIndicator.classList.toggle('hidden', !isRecording);
-            recordingIndicator.classList.toggle('flex', isRecording);
-            tabUpload.disabled = isRecording;
-        }
 
         // --- Core Transcription & UI Logic ---
         function switchViews(showResults) {
@@ -286,7 +203,6 @@
         }
 
         async function transcribeAudio(audioBlob) {
-            // 1. Switch to the results view and show loader
             switchViews(true);
             loader.classList.remove('hidden');
             transcriptionOutput.classList.add('hidden');
@@ -296,7 +212,7 @@
             
             if (apiKey === "YOUR_GEMINI_API_KEY_HERE") {
                 displayTranscription("ERROR: Please add your Gemini API Key to the 'apiKey' variable in the script.");
-                loader.classList.add('hidden'); // Hide loader on error
+                loader.classList.add('hidden');
                 return;
             }
 
@@ -308,7 +224,6 @@
                 const payload = {
                   "contents": [{
                       "parts": [
-                        // Updated prompt to get only raw text
                         { "text": "Transcribe the following audio precisely." },
                         { "inline_data": { "mime_type": audioBlob.type || 'audio/webm', "data": base64Audio } }
                       ]
@@ -337,38 +252,37 @@
                     currentTranscription = `Sorry, an error occurred: ${error.message}. Please try again.`;
                     displayTranscription(currentTranscription);
                 } finally {
-                    loader.classList.add('hidden'); // Hide loader after API call is complete
+                    loader.classList.add('hidden');
                 }
             };
             reader.readAsDataURL(audioBlob);
         }
         
         function displayTranscription(text) {
-            // Clear previous results
             transcriptionTextRows.innerHTML = '';
+            const sentences = text.match(/[^.?!]+[.?!]+|\s*[^.?!]+/g) || [];
 
-            // Split text into lines/sentences and display each in a row
-            const lines = text.split('\n').filter(line => line.trim() !== '');
-            lines.forEach(line => {
-                const row = document.createElement('div');
-                row.className = 'text-row';
-                row.textContent = line;
-                transcriptionTextRows.appendChild(row);
+            sentences.forEach(sentence => {
+                const trimmedSentence = sentence.trim();
+                if (trimmedSentence) {
+                    const row = document.createElement('div');
+                    row.className = 'text-row';
+                    row.textContent = trimmedSentence;
+                    transcriptionTextRows.appendChild(row);
+                }
             });
             
-            // Show the results area
             transcriptionOutput.classList.remove('hidden');
             tryAgainBtn.classList.remove('hidden');
         }
 
         // --- UI Reset and Action Buttons ---
         tryAgainBtn.addEventListener('click', () => {
-            switchViews(false); // Go back to the main view
+            switchViews(false);
             fileInput.value = '';
             fileNameDisplay.textContent = '';
             audioFile = null;
             transcribeFileBtn.disabled = true;
-            updateRecordingUI(false);
             currentTranscription = "";
         });
 
