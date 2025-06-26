@@ -66,15 +66,13 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        .conversation-table th, .conversation-table td {
-            padding: 12px 16px;
-            text-align: left;
-        }
-        .conversation-table thead {
-             background-color: #1F2937;
-        }
-        .conversation-table tbody tr:nth-child(even) {
+        .text-row {
+            padding: 8px 12px;
             background-color: #111827;
+            border-bottom: 1px solid #1F2937;
+        }
+        .text-row:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
@@ -144,24 +142,12 @@
                 <p class="text-gray-400 mt-4">Transcribing audio, please wait...</p>
             </div>
             <div id="transcription-output" class="hidden mt-8 text-left bg-gray-900 p-6 rounded-lg shadow-lg">
-                <h3 class="text-2xl font-bold text-white mb-4">Transcription Result</h3>
                 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-300 conversation-table">
-                        <thead class="text-xs text-gray-100 uppercase">
-                            <tr>
-                                <th scope="col" class="w-1/4">Speaker</th>
-                                <th scope="col" class="w-3/4">Dialogue</th>
-                            </tr>
-                        </thead>
-                        <tbody id="conversation-body">
-                        </tbody>
-                    </table>
-                </div>
-
-                <div id="raw-text-container" class="mt-4">
-                     <h4 class="text-xl font-bold text-white mb-2">Raw Text</h4>
-                     <div id="transcription-text" class="text-gray-300 whitespace-pre-wrap bg-gray-800 p-4 rounded-md"></div>
+                <div id="raw-text-container">
+                     <h4 class="text-xl font-bold text-white mb-2">Transcription</h4>
+                     <div id="transcription-text-rows" class="text-gray-300 bg-gray-800 p-4 rounded-md">
+                        <!-- Rows of text will be inserted here -->
+                     </div>
                 </div>
                 
                  <div class="mt-6 flex space-x-4">
@@ -192,8 +178,7 @@
         const resultContainer = document.getElementById('result-container');
         const loader = document.getElementById('loader');
         const transcriptionOutput = document.getElementById('transcription-output');
-        const transcriptionText = document.getElementById('transcription-text');
-        const conversationBody = document.getElementById('conversation-body');
+        const transcriptionTextRows = document.getElementById('transcription-text-rows');
         const copyBtn = document.getElementById('copy-btn');
         const downloadBtn = document.getElementById('download-btn');
         const tryAgainBtn = document.getElementById('try-again-btn');
@@ -323,7 +308,8 @@
                 const payload = {
                   "contents": [{
                       "parts": [
-                        { "text": "Transcribe the following audio precisely. Provide speaker labels (e.g., Speaker 1:, Speaker 2:) for diarization." },
+                        // Updated prompt to get only raw text
+                        { "text": "Transcribe the following audio precisely." },
                         { "inline_data": { "mime_type": audioBlob.type || 'audio/webm', "data": base64Audio } }
                       ]
                   }]
@@ -358,23 +344,16 @@
         }
         
         function displayTranscription(text) {
-            conversationBody.innerHTML = '';
-            transcriptionText.innerText = text;
+            // Clear previous results
+            transcriptionTextRows.innerHTML = '';
 
+            // Split text into lines/sentences and display each in a row
             const lines = text.split('\n').filter(line => line.trim() !== '');
             lines.forEach(line => {
-                const parts = line.split(':');
-                const speaker = parts.length > 1 ? parts[0].trim() : 'N/A';
-                const dialogue = parts.length > 1 ? parts.slice(1).join(':').trim() : line;
-                const row = document.createElement('tr');
-                const speakerCell = document.createElement('td');
-                const dialogueCell = document.createElement('td');
-                speakerCell.textContent = speaker;
-                speakerCell.className = 'font-semibold text-teal-400';
-                dialogueCell.textContent = dialogue;
-                row.appendChild(speakerCell);
-                row.appendChild(dialogueCell);
-                conversationBody.appendChild(row);
+                const row = document.createElement('div');
+                row.className = 'text-row';
+                row.textContent = line;
+                transcriptionTextRows.appendChild(row);
             });
             
             // Show the results area
