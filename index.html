@@ -208,15 +208,8 @@
             transcriptionOutput.classList.add('hidden');
             tryAgainBtn.classList.add('hidden');
 
-            const apiKey = "AIzaSyAM7IPg1CMbZyGYTxKay_Fb_k_GaK8vP7k"; 
-            
-            if (apiKey === "YOUR_GEMINI_API_KEY_HERE") {
-                displayTranscription("ERROR: Please add your Gemini API Key to the 'apiKey' variable in the script.");
-                loader.classList.add('hidden');
-                return;
-            }
-
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            // This now calls our secure backend proxy.
+            const apiUrl = "/api/transcribeProxy"; 
 
             const reader = new FileReader();
             reader.onloadend = async () => {
@@ -238,18 +231,25 @@
                     });
                     if (!response.ok) {
                         const errorData = await response.json();
-                        throw new Error(`API Error: ${errorData.error.message}`);
+                        let errorMessage = `API Error: ${errorData.error ? errorData.error.message : 'Unknown error'}`;
+                        if (response.status === 404) {
+                            errorMessage = "API endpoint not found. Please ensure the backend Azure Function is deployed and configured correctly.";
+                        }
+                        throw new Error(errorMessage);
                     }
                     const result = await response.json();
                     if (result.candidates && result.candidates.length > 0) {
                         const text = result.candidates[0].content.parts[0].text;
                         currentTranscription = text;
                         displayTranscription(text);
-                    } else {
+                    } else if (result.error) {
+                        throw new Error(`Gemini API Error: ${result.error.message}`);
+                    }
+                    else {
                         throw new Error("No transcription result found in API response.");
                     }
                 } catch (error) {
-                    currentTranscription = `Sorry, an error occurred: ${error.message}. Please try again.`;
+                    currentTranscription = `Sorry, an error occurred. ${error.message}`;
                     displayTranscription(currentTranscription);
                 } finally {
                     loader.classList.add('hidden');
@@ -260,7 +260,7 @@
         
         function displayTranscription(text) {
             transcriptionTextRows.innerHTML = '';
-            const sentences = text.match(/[^.?!]+[.?!]+|\s*[^.?!]+/g) || [];
+            const sentences = text.match(/[^.?!]+[.?!]+|\s*[^.?!]+/g) || [text];
 
             sentences.forEach(sentence => {
                 const trimmedSentence = sentence.trim();
