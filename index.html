@@ -208,7 +208,6 @@
             transcriptionOutput.classList.add('hidden');
             tryAgainBtn.classList.add('hidden');
 
-            // This now calls our secure backend proxy.
             const apiUrl = "/api/transcribeProxy"; 
 
             const reader = new FileReader();
@@ -229,14 +228,21 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
+                    
+                    // Improved Error Handling: Check if the response is not OK (e.g., 404, 500)
                     if (!response.ok) {
-                        const errorData = await response.json();
-                        let errorMessage = `API Error: ${errorData.error ? errorData.error.message : 'Unknown error'}`;
-                        if (response.status === 404) {
-                            errorMessage = "API endpoint not found. Please ensure the backend Azure Function is deployed and configured correctly.";
+                        let errorMessage = `Server error: ${response.status} ${response.statusText}.`;
+                        // Try to parse error from body, but handle cases where it's not JSON
+                        try {
+                            const errorData = await response.json();
+                            errorMessage += ` ${errorData.error || ''}`;
+                        } catch (e) {
+                            // The response body was not JSON, which is the cause of the original error.
+                            errorMessage += " The server response was not in a valid format. Ensure the API function is deployed correctly.";
                         }
                         throw new Error(errorMessage);
                     }
+
                     const result = await response.json();
                     if (result.candidates && result.candidates.length > 0) {
                         const text = result.candidates[0].content.parts[0].text;
@@ -249,7 +255,7 @@
                         throw new Error("No transcription result found in API response.");
                     }
                 } catch (error) {
-                    currentTranscription = `Sorry, an error occurred. ${error.message}`;
+                    currentTranscription = `Sorry, an error occurred: ${error.message}`;
                     displayTranscription(currentTranscription);
                 } finally {
                     loader.classList.add('hidden');
@@ -260,17 +266,24 @@
         
         function displayTranscription(text) {
             transcriptionTextRows.innerHTML = '';
-            const sentences = text.match(/[^.?!]+[.?!]+|\s*[^.?!]+/g) || [text];
-
-            sentences.forEach(sentence => {
-                const trimmedSentence = sentence.trim();
-                if (trimmedSentence) {
-                    const row = document.createElement('div');
-                    row.className = 'text-row';
-                    row.textContent = trimmedSentence;
-                    transcriptionTextRows.appendChild(row);
-                }
-            });
+            // Display errors directly
+            if (text.toLowerCase().startsWith('sorry, an error occurred')) {
+                 const row = document.createElement('div');
+                 row.className = 'text-row text-red-500';
+                 row.textContent = text;
+                 transcriptionTextRows.appendChild(row);
+            } else {
+                const sentences = text.match(/[^.?!]+[.?!]+|\s*[^.?!]+/g) || [text];
+                sentences.forEach(sentence => {
+                    const trimmedSentence = sentence.trim();
+                    if (trimmedSentence) {
+                        const row = document.createElement('div');
+                        row.className = 'text-row';
+                        row.textContent = trimmedSentence;
+                        transcriptionTextRows.appendChild(row);
+                    }
+                });
+            }
             
             transcriptionOutput.classList.remove('hidden');
             tryAgainBtn.classList.remove('hidden');
@@ -298,7 +311,7 @@
             const blob = new Blob([currentTranscription], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
+a.href = url;
             a.download = 'transcription.txt';
             document.body.appendChild(a);
             a.click();
