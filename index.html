@@ -3,320 +3,498 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Provoice - Turn your audio into text</title>
+    <title>Proscribe - Project Presentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lottie Player script removed as it's no longer needed -->
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(to bottom right, #ffffff, #e0f2f1);
-            color: #374151;
         }
-        .btn-primary {
-            background-color: #14B8A6; /* teal-500 */
-            color: white;
-            transition: background-color 0.2s ease-in-out;
+
+        /* The requested radial gradient background */
+        .custom-radial-gradient {
+            background: #000000;
+            background: radial-gradient(circle, rgba(0, 0, 0, 1) 42%, rgba(0, 204, 170, 1) 100%);
         }
-        .btn-primary:hover:not(:disabled) {
-            background-color: #0D9488; /* teal-600 */
+
+        /* Basic slide visibility */
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
         }
-        .btn-primary:disabled {
-            background-color: #E5E7EB; /* gray-200 */
-            color: #9CA3AF; /* gray-400 */
-            cursor: not-allowed;
+
+        .slide.active {
+            display: flex; /* Use flex to center content */
+            opacity: 1;
         }
-        .logout-btn {
-             background-color: #14B8A6;
-             border: 1px solid #14B8A6;
+
+        /* Fade in animation for wrapper */
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-in-out;
         }
-        .logout-btn:hover {
-            background-color: #0D9488;
-        }
-        .dashboard-link {
-            color: #374151;
-            transition: color 0.2s;
-        }
-        .dashboard-link:hover {
-            color: #14B8A6;
-        }
-        .upload-card {
-            background-color: white;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .drop-zone {
-            border: 2px dashed #D1D5DB; /* gray-300 */
-            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-        }
-        .drop-zone.drag-over {
-            background-color: #F3F4F6; /* gray-100 */
-            border-color: #9CA3AF; /* gray-400 */
-        }
-        .loader {
-            border-top-color: #14B8A6;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
             }
-        }
-        .text-row {
-            padding: 8px 12px;
-            border-bottom: 1px solid #E5E7EB; /* gray-200 */
-        }
-        .text-row:last-child {
-            border-bottom: none;
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
-    <!-- Header -->
-    <header class="py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <i class="fas fa-microphone-alt text-xl sm:text-2xl text-teal-500"></i>
-                <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Provoice</h1>
-            </div>
-            <div class="flex items-center space-x-3 sm:space-x-6">
-                <a href="#" class="hidden sm:block dashboard-link font-semibold">Dashboard</a>
-                <button class="logout-btn btn-primary font-bold py-2 px-3 sm:px-4 rounded-lg text-sm sm:text-base">Logout</button>
+<body class="bg-black text-white font-sans w-full h-screen flex flex-col items-center justify-center relative overflow-hidden">
+    <!-- Background Gradient -->
+    <div class="absolute top-0 left-0 w-full h-full custom-radial-gradient"></div>
+    
+    <!-- Slides Container -->
+    <div id="slides-container" class="relative z-10 w-full h-full flex flex-col p-4 md:p-8 items-center justify-center">
+
+        <!-- Slide 1: Title -->
+        <div id="slide-0" class="slide active text-center">
+            <div class="animate-fade-in">
+                <div class="mb-4">
+                     <!-- Transcriber Logo SVG -->
+                     <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto h-24 w-24 text-teal-400"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-white">Proscribe End to End Encrypted Audio Intelligence Platform</h1>
+                <p class="text-2xl md:text-3xl text-teal-300 mt-4">(PAIP)</p>
+                <div class="mt-12 border-t border-teal-800 pt-6 w-full sm:w-3/4 md:w-1/2 mx-auto">
+                    <p class="text-lg text-gray-300">Presented to: Prochant,Inc</p>
+                    <p class="text-md text-gray-400">June 27, 2025</p>
+                </div>
             </div>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
-        <!-- Main Container for Upload -->
-        <div id="main-container" class="w-full">
-            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-800">
-                Turn your audio into text in minutes
-            </h2>
-            <p class="mt-4 text-base sm:text-lg text-gray-500 max-w-2xl mx-auto">
-                Upload your file and get a high-quality transcript back in just a few clicks.
-            </p>
+        <!-- Slide 2: Executive Summary -->
+        <div id="slide-1" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Executive Summary</h1>
+                <div class="text-lg text-gray-200 space-y-4 leading-relaxed max-w-4xl mx-auto">
+                    <p>
+                        Proscribe is an end-to-end encrypted platform designed to securely capture, transcribe, and analyze audio from clinical interactions. Built entirely on the Microsoft Azure cloud, it addresses the critical need for accurate documentation, quality assurance, and robust security in modern healthcare.
+                    </p>
+                    <p>
+                        The platform offers real-time transcription, secure 2FA login, and AI-driven analytics to assess communication quality. The goal is to improve clinical efficiency, ensure HIPAA compliance, and provide valuable insights for training and quality improvement, leading to better patient outcomes.
+                    </p>
+                </div>
+            </div>
+        </div>
 
-            <div id="upload-card" class="upload-card mt-8 w-full max-w-lg mx-auto p-6 sm:p-8 rounded-lg">
-                <h3 class="text-lg sm:text-xl font-semibold mb-6">Upload Your Audio</h3>
-                <div id="drop-zone" class="w-full p-6 sm:p-10 rounded-lg drop-zone">
-                    <input type="file" id="file-input" class="hidden" accept="audio/*">
-                    <div class="flex flex-col items-center justify-center space-y-4">
-                        <i class="fas fa-upload text-3xl sm:text-4xl text-teal-500"></i>
-                        <p class="text-gray-600 text-sm sm:text-base">
-                            Drag & drop your audio file here
-                        </p>
-                        <p class="text-gray-400 text-sm">or</p>
-                        <button id="browse-btn" class="btn-primary font-bold py-2 px-6 rounded-lg text-sm sm:text-base">Browse Files</button>
-                        <p id="file-name" class="text-sm text-gray-500 pt-2"></p>
+        <!-- Slide 3: The Challenge -->
+        <div id="slide-2" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">The Challenge in Healthcare Communication</h1>
+                 <div class="grid md:grid-cols-3 gap-6 text-center mt-4">
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto h-12 w-12 text-red-400 mb-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                        <h3 class="text-xl font-semibold text-white mb-2">Security & Compliance Risks</h3>
+                        <p class="text-gray-300">Protecting sensitive Patient Health Information (PHI) across various communication channels is complex and critical.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto h-12 w-12 text-yellow-400 mb-4"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+                        <h3 class="text-xl font-semibold text-white mb-2">Administrative Burden</h3>
+                        <p class="text-gray-300">Manual transcription and documentation consume valuable organization time, leading to burnout and potential inaccuracies.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto h-12 w-12 text-green-400 mb-4"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
+                        <h3 class="text-xl font-semibold text-white mb-2">Lack of Quality Metrics</h3>
+                        <p class="text-gray-300">It is difficult to objectively assess and provide feedback on communication quality for training and improvement.</p>
                     </div>
                 </div>
-                <button id="transcribe-file-btn" class="w-full mt-6 btn-primary font-bold py-3 px-8 rounded-lg text-base sm:text-lg" disabled>Transcribe Audio</button>
             </div>
         </div>
 
-        <!-- Result Container -->
-        <div id="result-container" class="w-full max-w-4xl hidden">
-             <div id="loader" class="hidden my-8">
-                <div class="loader ease-linear rounded-full border-4 border-t-4 h-12 w-12 mx-auto"></div>
-                <p class="text-gray-500 mt-4">Transcribing audio, please wait...</p>
-            </div>
-            <div id="transcription-output" class="hidden mt-8 text-left bg-white p-4 sm:p-6 rounded-lg shadow-lg">
-                <h4 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Transcription</h4>
-                <div id="transcription-text-rows" class="text-gray-600 bg-gray-50 p-2 sm:p-4 rounded-md border border-gray-200 text-sm sm:text-base">
+        <!-- Slide 4: Vision and Goals -->
+        <div id="slide-3" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Our Vision & Goals</h1>
+                <div class="text-center mb-6">
+                    <p class="text-xl text-gray-300 max-w-4xl mx-auto">To empower healthcare professionals with a secure and intelligent tool that transforms spoken interactions into structured, actionable data.</p>
                 </div>
-                 <div class="mt-6 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-                     <button id="copy-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg w-full sm:w-auto">
-                        <i class="fas fa-copy mr-2"></i>Copy Text
-                    </button>
-                    <button id="download-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg w-full sm:w-auto">
-                        <i class="fas fa-download mr-2"></i>Download
-                    </button>
-                 </div>
+                <div class="grid md:grid-cols-3 gap-6 text-left mt-4">
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Enhance Security</h3>
+                        <p class="text-gray-300">Implement end-to-end encryption and strict access controls to protect PHI and ensure HIPAA compliance.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Improve Documentation</h3>
+                        <p class="text-gray-300">Automate transcription to reduce administrative load and improve the accuracy of Quality.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>Enable Quality Assurance</h3>
+                        <p class="text-gray-300">Provide objective metrics on communication for data-driven training and performance reviews.</p>
+                    </div>
+                </div>
             </div>
-            <button id="try-again-btn" class="hidden mt-8 btn-primary font-bold py-3 px-8 rounded-lg shadow-lg">
-                Transcribe Another File
+        </div>
+
+        <!-- Slide 5: Introducing -->
+        <div id="slide-4" class="slide text-center">
+            <div class="animate-fade-in">
+                <p class="text-xl md:text-2xl text-teal-300">Introducing</p>
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-white mt-2">Secure Proscribe Audio Intelligence Platform</h1>
+                <div class="mt-8 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-8">
+                    <div class="flex flex-col items-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16 text-teal-400"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                        <span class="mt-2 text-lg">Transcribe</span>
+                    </div>
+                    <div class="text-2xl md:text-4xl text-gray-500 transform rotate-90 sm:rotate-0">&rarr;</div>
+                    <div class="flex flex-col items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16 text-green-400"><path d="M12 8V4H8"></path><rect x="4" y="12" width="8" height="8" rx="2"></rect><path d="M20 12v4h-4"></path><path d="M16 4h4v4"></path></svg>
+                        <span class="mt-2 text-lg">Analyze</span>
+                    </div>
+                    <div class="text-2xl md:text-4xl text-gray-500 transform rotate-90 sm:rotate-0">&rarr;</div>
+                    <div class="flex flex-col items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16 text-red-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <span class="mt-2 text-lg">Secure</span>
+                    </div>
+                </div>
+                <p class="mt-8 text-lg text-gray-300">An integrated solution built on the power of Microsoft Azure.</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Architecture -->
+        <div id="slide-5" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Azure-Native Architecture</h1>
+                <div class="p-4 bg-gray-900 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <div class="flex flex-col items-center text-center p-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-16 h-16 text-teal-300 mb-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            <h3 class="font-bold text-lg">Quality Assurance</h3>
+                            <p class="text-sm text-gray-400">Securely logs in, uploads audio, views live transcription.</p>
+                        </div>
+                        <div class="text-5xl text-center text-gray-500 self-center transform rotate-90 md:rotate-0">&darr;</div>
+                        <div class="md:col-span-1 rounded-lg border-2 border-dashed border-teal-500 p-4 text-center">
+                            <h3 class="font-bold text-xl mb-4 text-teal-400">Proscribe on Azure</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center bg-gray-800 p-2 rounded-md"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-teal-400"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>Azure App Service (Web Portal)</div>
+                                <div class="flex items-center bg-gray-800 p-2 rounded-md"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-green-400"><path d="M20 12V8a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v4"></path><path d="M4 12v4a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-4"></path><path d="M12 12h.01"></path></svg>Microsoft Entra ID B2C (2FA)</div>
+                                <div class="flex items-center bg-gray-800 p-2 rounded-md"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3 text-yellow-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>Azure Functions (Backend Logic)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 my-4">
+                        <div></div>
+                        <div class="text-5xl text-center text-gray-500 self-center">&darr;</div>
+                        <div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div class="p-4 bg-gray-800 rounded-lg border border-gray-700">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto w-10 h-10 text-purple-400 mb-2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                            <h4 class="font-bold">Azure AI Speech</h4>
+                            <p class="text-sm text-gray-400">Real-time & Batch Transcription, Diarization, Pronunciation Assessment.</p>
+                        </div>
+                        <div class="p-4 bg-gray-800 rounded-lg border border-gray-700">
+                            <!-- Language Analysis Logo SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto w-10 h-10 text-teal-400 mb-2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="9" y1="10" x2="15" y2="10"></line><line x1="9" y1="14" x2="13" y2="14"></line></svg>
+                            <h4 class="font-bold">Azure AI Language</h4>
+                            <p class="text-sm text-gray-400">Sentiment analysis for conversational quality metrics.</p>
+                        </div>
+                        <div class="p-4 bg-gray-800 rounded-lg border border-gray-700">
+                            <div class="flex justify-center space-x-4 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-cyan-400"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-cyan-400"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-cyan-400"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="m21 2-9.6 9.6"></path><path d="M18 5 9.6 9.6"></path></svg>
+                            </div>
+                            <h4 class="font-bold">Secure Storage</h4>
+                            <p class="text-sm text-gray-400">Blob Storage (Files), SQL DB (Metadata), Key Vault (Secrets & Keys).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 7: Security Feature -->
+        <div id="slide-6" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Core Feature: End-to-End Security</h1>
+                 <div class="grid md:grid-cols-3 gap-6 text-center">
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Encryption in Transit</h3>
+                        <p class="text-gray-300">All data secured with TLS 1.3 between the user and Azure services, protecting data on the move.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Encryption at Rest</h3>
+                        <p class="text-gray-300">Data in Azure Blob Storage and SQL is encrypted, with Customer-Managed Keys in Azure Key Vault for ultimate control.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Secure Authentication</h3>
+                        <p class="text-gray-300">Microsoft Entra ID B2C provides robust identity management with mandatory Two-Factor Authentication (2FA).</p>
+                    </div>
+                </div>
+                <div class="mt-8 text-center bg-teal-900/50 p-4 rounded-lg border border-teal-700">
+                    <p class="font-bold text-lg text-white">All selected Azure services are HIPAA-eligible, and Microsoft provides a Business Associate Agreement (BAA).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Live Transcription Feature -->
+        <div id="slide-7" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Core Feature: Live Transcription & Diarization</h1>
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="w-full md:w-1/2">
+                        <h3 class="text-2xl font-semibold text-teal-400 mb-4">Real-Time Clinical Information</h3>
+                        <p class="text-lg text-gray-300 leading-relaxed">
+                            The platform displays streaming captions live during Insurance call between a representative and a caller, providing immediate feedback and insights.
+                        </p>
+                        <p class="mt-4 text-lg text-gray-300 leading-relaxed">
+                            <strong class="text-white">Speaker Diarization</strong> automatically identifies and labels who is speaking, creating a clear, easy-to-read record of the entire interaction.
+                        </p>
+                    </div>
+                    <div class="w-full md:w-1/2 bg-gray-800 p-6 rounded-lg border border-gray-700 font-mono text-sm shadow-lg overflow-x-auto">
+                        <p><span class="text-green-400 font-bold">Speaker 1 (Rep):</span> <span class="text-gray-200">Hi, Thank you for Calling Humana Insurance, My name is Lia.</span></p>
+                        <p class="mt-2"><span class="text-yellow-400 font-bold">Speaker 2 (Caller):</span> <span class="text-gray-200">Hi Lia this is Peter, Calling from Medical Facility to Check Members Eligibility & Benefits</span></p>
+                        <p class="mt-2"><span class="text-green-400 font-bold">Speaker 1 (Rep):</span> <span class="text-gray-200">Ok, Can I get the Provider NPI or Tax ID</span></p>
+                        <div class="flex items-center mt-4">
+                            <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse mr-2"></div>
+                            <span class="text-red-400">LIVE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 9: Quality Metrics -->
+        <div id="slide-8" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Core Feature: Advanced Quality Metrics</h1>
+                 <div class="grid md:grid-cols-3 gap-6 text-center">
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Pronunciation Score</h3>
+                        <p class="text-gray-300">Azure AI Speech provides scores on accuracy, fluency, and identifies mispronounced words for targeted feedback.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Conversational Ability</h3>
+                        <p class="text-gray-300">Azure AI Language analyzes sentiment and tone to gauge the quality of the interaction and patient rapport.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Protocol Adherence</h3>
+                        <p class="text-gray-300">A custom module checks if key phrases for proper call introductions and conclusions were used.</p>
+                    </div>
+                </div>
+                <div class="mt-8 text-center bg-gray-800 p-4 rounded-lg border border-gray-700">
+                     <h3 class="text-xl font-semibold text-white mb-2">Result: An objective, data-driven score for training and quality improvement.</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Workflow -->
+        <div id="slide-9" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Seamless User Workflow</h1>
+                <div class="flex flex-col md:flex-row justify-around items-center space-y-4 md:space-y-0 md:space-x-4 text-center mt-6">
+                    <div class="flex flex-col items-center">
+                        <div class="rounded-full bg-teal-500 text-white p-4 mb-2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                        <h3 class="font-bold text-lg">1. Secure Login</h3>
+                        <p class="text-sm text-gray-400">User authenticates via<br/>Entra ID with 2FA.</p>
+                    </div>
+                    <div class="text-2xl text-gray-500 transform rotate-90 md:rotate-0">&rarr;</div>
+                    <div class="flex flex-col items-center">
+                        <div class="rounded-full bg-teal-500 text-white p-4 mb-2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg></div>
+                        <h3 class="font-bold text-lg">2. Capture Audio</h3>
+                        <p class="text-sm text-gray-400">Initiate live session or<br/>upload a recording.</p>
+                    </div>
+                    <div class="text-2xl text-gray-500 transform rotate-90 md:rotate-0">&rarr;</div>
+                    <div class="flex flex-col items-center">
+                        <div class="rounded-full bg-teal-500 text-white p-4 mb-2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+                        <h3 class="font-bold text-lg">3. Transcribe & Analyze</h3>
+                        <p class="text-sm text-gray-400">View live captions and<br/>get AI-powered insights.</p>
+                    </div>
+                    <div class="text-2xl text-gray-500 transform rotate-90 md:rotate-0">&rarr;</div>
+                    <div class="flex flex-col items-center">
+                        <div class="rounded-full bg-teal-500 text-white p-4 mb-2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></div>
+                        <h3 class="font-bold text-lg">4. Review & Export</h3>
+                        <p class="text-sm text-gray-400">Access final transcript<br/>and download the file.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Roadmap -->
+        <div id="slide-10" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Phased Implementation Roadmap</h1>
+                 <div class="relative mt-8 md:mt-12">
+                     <!-- Horizontal line for medium screens and up -->
+                    <div class="hidden md:block absolute left-0 top-4 w-full h-1 bg-gray-700"></div>
+                     <!-- Vertical line for small screens -->
+                    <div class="md:hidden absolute top-0 left-4 w-1 h-full bg-gray-700"></div>
+
+                    <div class="relative flex flex-col md:flex-row justify-between space-y-8 md:space-y-0">
+                        <div class="md:w-1/3 flex md:flex-col items-center text-center">
+                            <div class="z-10 w-8 h-8 rounded-full bg-teal-500 border-4 border-gray-900 flex items-center justify-center font-bold flex-shrink-0">1</div>
+                            <div class="md:mt-4 ml-4 md:ml-0 bg-gray-800 p-4 rounded-lg">
+                                <h3 class="font-bold text-lg text-teal-400">Phase 1 (Months 1-3)</h3>
+                                <p class="text-sm text-gray-300 mt-2">Core Infrastructure & Batch Transcription</p>
+                            </div>
+                        </div>
+                        <div class="md:w-1/3 flex md:flex-col items-center text-center">
+                            <div class="z-10 w-8 h-8 rounded-full bg-teal-500 border-4 border-gray-900 flex items-center justify-center font-bold flex-shrink-0">2</div>
+                            <div class="md:mt-4 ml-4 md:ml-0 bg-gray-800 p-4 rounded-lg">
+                                <h3 class="font-bold text-lg text-teal-400">Phase 2 (Months 4-5)</h3>
+                                <p class="text-sm text-gray-300 mt-2">Live Transcription & UI/UX Enhancement</p>
+                            </div>
+                        </div>
+                        <div class="md:w-1/3 flex md:flex-col items-center text-center">
+                            <div class="z-10 w-8 h-8 rounded-full bg-teal-500 border-4 border-gray-900 flex items-center justify-center font-bold flex-shrink-0">3</div>
+                            <div class="md:mt-4 ml-4 md:ml-0 bg-gray-800 p-4 rounded-lg">
+                                <h3 class="font-bold text-lg text-teal-400">Phase 3 (Months 6-7)</h3>
+                                <p class="text-sm text-gray-300 mt-2">Advanced Analytics & Quality Metrics</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Benefits -->
+        <div id="slide-11" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Benefits to Our Organization</h1>
+                <div class="grid md:grid-cols-2 gap-6 text-left">
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Establish Client Confidence</h3>
+                        <p class="text-gray-300">Enhances Voice Quality, enabling greater emphasis on Production Quality.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Enhanced Data Security</h3>
+                        <p class="text-gray-300">Significantly mitigates risk of PHI data breaches through robust encryption and access controls.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Improved Patient Safety</h3>
+                        <p class="text-gray-300">Ensures higher accuracy in PHI, reducing errors from manual transcription.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold text-teal-400 mb-2">Data-Driven Training</h3>
+                        <p class="text-gray-300">Provides objective, actionable insights for improving communication skills and service quality.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Next Steps -->
+        <div id="slide-12" class="slide">
+             <div class="w-full max-w-6xl mx-auto p-4 md:p-8 bg-black bg-opacity-30 backdrop-blur-md rounded-2xl border border-gray-700 shadow-2xl animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-teal-400 mb-6 text-center">Conclusion & Next Steps</h1>
+                <div class="text-lg text-gray-200 space-y-4 leading-relaxed max-w-4xl mx-auto text-center">
+                    <p>
+                        The Proscribe Audio Intelligence Platform (PAIP) will be a transformative asset, enhancing security, efficiency, and quality of care. By leveraging the power of Microsoft Azure, we can deliver a state-of-the-art solution tailored to the specific needs of our organization.
+                    </p>
+                    <div class="mt-8 border-t border-teal-800 pt-6">
+                        <h3 class="text-2xl font-semibold text-white mb-4">We Recommend:</h3>
+                        <ul class="list-none space-y-2">
+                            <li class="bg-teal-900/50 p-3 rounded-lg">1. A follow-up technical deep-dive session with key stakeholders.</li>
+                            <li class="bg-teal-900/50 p-3 rounded-lg">2. Allocating budget for a Phase 1 Proof of Concept (POC) to demonstrate core value.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Q&A -->
+        <div id="slide-13" class="slide text-center">
+            <div class="animate-fade-in">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white">Thank You</h1>
+                <p class="text-3xl sm:text-4xl text-teal-300 mt-6">Questions?</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation and Progress -->
+    <div class="absolute bottom-0 left-0 w-full p-4 flex items-center justify-between z-20">
+        <div id="slide-counter" class="text-sm text-gray-400 flex-shrink-0">
+            Slide 1 of 14
+        </div>
+        <div class="flex items-center justify-end flex-grow">
+            <div id="progress-bar" class="hidden sm:flex space-x-2 mr-4">
+            </div>
+            <button id="prev-btn" class="px-3 py-2 sm:px-4 sm:py-2 bg-gray-700 rounded-l-md hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                Prev
+            </button>
+            <button id="next-btn" class="px-3 py-2 sm:px-4 sm:py-2 bg-teal-600 rounded-r-md hover:bg-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                Next
             </button>
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="py-6 px-4 sm:px-6 lg:px-8">
-        <div class="container mx-auto text-center text-xs sm:text-sm text-gray-400">
-            &copy; 2025 Provoice. All Rights Reserved.
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // --- DOM Elements ---
-        const mainContainer = document.getElementById('main-container');
-        const resultContainer = document.getElementById('result-container');
-        const loader = document.getElementById('loader');
-        const transcriptionOutput = document.getElementById('transcription-output');
-        const transcriptionTextRows = document.getElementById('transcription-text-rows');
-        const copyBtn = document.getElementById('copy-btn');
-        const downloadBtn = document.getElementById('download-btn');
-        const tryAgainBtn = document.getElementById('try-again-btn');
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const browseBtn = document.getElementById('browse-btn');
-        const fileNameDisplay = document.getElementById('file-name');
-        const transcribeFileBtn = document.getElementById('transcribe-file-btn');
-        
-        // --- State Variables ---
-        let audioFile = null;
-        let currentTranscription = "";
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const slideCounter = document.getElementById('slide-counter');
+            const progressBar = document.getElementById('progress-bar');
+            
+            let currentSlide = 0;
+            const totalSlides = slides.length;
 
-        // --- Event Listeners for File Input ---
-        dropZone.addEventListener('click', () => fileInput.click());
-        browseBtn.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            handleFile(e.dataTransfer.files[0]);
-        });
-        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
-        
-        function handleFile(file) {
-             if (file && file.type.startsWith('audio/')) {
-                audioFile = file;
-                fileNameDisplay.textContent = `File selected: ${file.name}`;
-                transcribeFileBtn.disabled = false;
-            } else {
-                audioFile = null;
-                fileNameDisplay.textContent = 'Please select a valid audio file.';
-                transcribeFileBtn.disabled = true;
-            }
-        }
-
-        transcribeFileBtn.addEventListener('click', () => {
-             if (audioFile) {
-                transcribeAudio(audioFile);
-             }
-        });
-
-        // --- Core Transcription & UI Logic ---
-        function switchViews(showResults) {
-            mainContainer.classList.toggle('hidden', showResults);
-            resultContainer.classList.toggle('hidden', !showResults);
-        }
-
-        async function transcribeAudio(audioBlob) {
-            switchViews(true);
-            loader.classList.remove('hidden');
-            transcriptionOutput.classList.add('hidden');
-            tryAgainBtn.classList.add('hidden');
-
-            const apiUrl = "/api/transcribeProxy"; 
-
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                const base64Audio = reader.result.split(',')[1];
-                const payload = {
-                  "contents": [{
-                      "parts": [
-                        { "text": "Transcribe the following audio precisely." },
-                        { "inline_data": { "mime_type": audioBlob.type || 'audio/webm', "data": base64Audio } }
-                      ]
-                  }]
-                };
-
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    // Improved Error Handling: Check if the response is not OK (e.g., 404, 500)
-                    if (!response.ok) {
-                        let errorMessage = `Server error: ${response.status} ${response.statusText}.`;
-                        // Try to parse error from body, but handle cases where it's not JSON
-                        try {
-                            const errorData = await response.json();
-                            errorMessage += ` ${errorData.error || ''}`;
-                        } catch (e) {
-                            // The response body was not JSON, which is the cause of the original error.
-                            errorMessage += " The server response was not in a valid format. Ensure the API function is deployed correctly.";
-                        }
-                        throw new Error(errorMessage);
-                    }
-
-                    const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0) {
-                        const text = result.candidates[0].content.parts[0].text;
-                        currentTranscription = text;
-                        displayTranscription(text);
-                    } else if (result.error) {
-                        throw new Error(`Gemini API Error: ${result.error.message}`);
-                    }
-                    else {
-                        throw new Error("No transcription result found in API response.");
-                    }
-                } catch (error) {
-                    currentTranscription = `Sorry, an error occurred: ${error.message}`;
-                    displayTranscription(currentTranscription);
-                } finally {
-                    loader.classList.add('hidden');
+            // --- Slide Navigation Logic ---
+            const setupNavigation = () => {
+                progressBar.innerHTML = '';
+                for (let i = 0; i < totalSlides; i++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('h-2', 'w-4', 'rounded-full', 'transition-all', 'duration-300', 'cursor-pointer');
+                    dot.classList.toggle('bg-teal-500', i === 0);
+                    dot.classList.toggle('w-8', i === 0);
+                    dot.classList.toggle('bg-gray-600', i !== 0);
+                    dot.dataset.index = i;
+                    dot.addEventListener('click', () => showSlide(parseInt(dot.dataset.index)));
+                    progressBar.appendChild(dot);
                 }
             };
-            reader.readAsDataURL(audioBlob);
-        }
-        
-        function displayTranscription(text) {
-            transcriptionTextRows.innerHTML = '';
-            // Display errors directly
-            if (text.toLowerCase().startsWith('sorry, an error occurred')) {
-                 const row = document.createElement('div');
-                 row.className = 'text-row text-red-500';
-                 row.textContent = text;
-                 transcriptionTextRows.appendChild(row);
-            } else {
-                const sentences = text.match(/[^.?!]+[.?!]+|\s*[^.?!]+/g) || [text];
-                sentences.forEach(sentence => {
-                    const trimmedSentence = sentence.trim();
-                    if (trimmedSentence) {
-                        const row = document.createElement('div');
-                        row.className = 'text-row';
-                        row.textContent = trimmedSentence;
-                        transcriptionTextRows.appendChild(row);
-                    }
-                });
-            }
             
-            transcriptionOutput.classList.remove('hidden');
-            tryAgainBtn.classList.remove('hidden');
-        }
+            const progressDots = () => progressBar.querySelectorAll('div');
 
-        // --- UI Reset and Action Buttons ---
-        tryAgainBtn.addEventListener('click', () => {
-            switchViews(false);
-            fileInput.value = '';
-            fileNameDisplay.textContent = '';
-            audioFile = null;
-            transcribeFileBtn.disabled = true;
-            currentTranscription = "";
-        });
+            const showSlide = (index) => {
+                 if (index < 0 || index >= totalSlides) return;
+                const oldDot = progressDots()[currentSlide];
+                const newDot = progressDots()[index];
 
-        copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(currentTranscription).then(() => {
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
-                setTimeout(() => { copyBtn.innerHTML = originalText; }, 2000);
-            }).catch(err => console.error('Failed to copy text: ', err));
-        });
+                slides[currentSlide].classList.remove('active');
+                if(oldDot) {
+                    oldDot.classList.remove('bg-teal-500', 'w-8');
+                    oldDot.classList.add('bg-gray-600');
+                }
 
-        downloadBtn.addEventListener('click', () => {
-            const blob = new Blob([currentTranscription], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-a.href = url;
-            a.download = 'transcription.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+                currentSlide = index;
+
+                slides[currentSlide].classList.add('active');
+                 if(newDot) {
+                    newDot.classList.add('bg-teal-500', 'w-8');
+                    newDot.classList.remove('bg-gray-600');
+                }
+
+                slideCounter.textContent = `Slide ${currentSlide + 1} of ${totalSlides}`;
+                prevBtn.disabled = currentSlide === 0;
+                nextBtn.disabled = currentSlide === totalSlides - 1;
+            };
+
+            setupNavigation();
+            showSlide(0);
+
+            const nextSlide = () => { showSlide(currentSlide + 1); };
+            const prevSlide = () => { showSlide(currentSlide - 1); };
+
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') nextSlide();
+                else if (e.key === 'ArrowLeft') prevSlide();
+            });
+
         });
     </script>
 </body>
