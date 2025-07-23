@@ -12,7 +12,7 @@ Privacy-Focused: Assurances that no audio files or data are saved on the server.
 
 🚀 Getting Started
 
-Follow these steps to set up and run Provoice locally.
+Follow these steps to set up and run ASR locally.
 
 Prerequisites
 
