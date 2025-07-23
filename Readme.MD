@@ -1,6 +1,6 @@
 Automatic-Speech-Recognition-Gemini-API - Turn Your Audio into Text 🎤📄
 
-Provoice is a sleek, responsive web application that leverages the Google Gemini API for accurate and efficient Automatic Speech Recognition (ASR). It provides a user-friendly interface for uploading audio files and receiving high-quality text transcriptions, designed with privacy and simplicity in mind.
+ASR Gemini is a sleek, responsive web application that leverages the Google Gemini API for accurate and efficient Automatic Speech Recognition (ASR). It provides a user-friendly interface for uploading audio files and receiving high-quality text transcriptions, designed with privacy and simplicity in mind.
 
 ✨ Features
 
