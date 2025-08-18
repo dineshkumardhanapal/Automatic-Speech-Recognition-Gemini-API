@@ -4,6 +4,8 @@ ASR Gemini is a sleek, responsive web application that leverages the Google Gemi
 
 Note: Prior to utilizing this website, please ensure that you include your Gemini API key within the JavaScript code.
 
+Demo Site- https://automatic-speech-recognition-gemini-api.onrender.com
+
 ✨ Features
 
 Effortless Audio Uploads: Easily upload audio files via drag-and-drop or a file browser.
