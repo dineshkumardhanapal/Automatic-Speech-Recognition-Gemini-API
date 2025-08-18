@@ -27,7 +27,7 @@ Installation
 
 Clone the Repository:
 Bash
-git clone https://github.com/your-username/provoice.git
+git clone https://github.com/your-username/recognize.git
 cd provoce
 
 (Replace your-username with your actual GitHub username if you're forking, or clone directly from the source.)
